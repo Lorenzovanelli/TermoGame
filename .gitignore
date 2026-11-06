@@ -1,0 +1,15 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.keystore
+*.jks
+# Decisao do grupo: manter ou nao o google-services.json no Git (confirmar com o Integrante 5).
+# app/google-services.json

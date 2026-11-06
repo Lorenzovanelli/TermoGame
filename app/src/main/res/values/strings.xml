@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DevTermo</string>
+    <string name="app_slogan">O desafio das palavras da programação</string>
+
+    <string name="perfil_jogador">Entrar como Jogador</string>
+    <string name="perfil_admin">Entrar como Administrador</string>
+
+    <string name="nav_inicio">Início</string>
+    <string name="nav_ranking">Ranking</string>
+    <string name="nav_historico">Histórico</string>
+    <string name="nav_perfil">Perfil</string>
+    <string name="nav_painel">Painel</string>
+    <string name="nav_palavras">Palavras</string>
+    <string name="nav_estatisticas">Estatísticas</string>
+
+    <string name="home_iniciar">Iniciar partida</string>
+    <string name="game_titulo">Partida</string>
+    <string name="game_confirmar">Confirmar</string>
+    <string name="game_apagar">Apagar</string>
+    <string name="game_tentativas_restantes">Tentativas restantes: %1$d</string>
+    <string name="game_dica">Dica: %1$s</string>
+    <string name="game_vitoria">Você acertou!</string>
+    <string name="game_derrota">Fim de jogo. A palavra era %1$s</string>
+
+    <string name="admin_titulo">Painel administrativo</string>
+    <string name="words_titulo">Gerenciar palavras</string>
+    <string name="words_adicionar">Adicionar palavra</string>
+    <string name="words_buscar">Buscar palavra</string>
+    <string name="form_titulo">Cadastro e edição</string>
+    <string name="form_salvar">Salvar</string>
+    <string name="form_cancelar">Cancelar</string>
+    <string name="stats_titulo">Estatísticas</string>
+    <string name="ranking_titulo">Ranking</string>
+    <string name="history_titulo">Histórico</string>
+    <string name="profile_titulo">Perfil</string>
+
+</resources>

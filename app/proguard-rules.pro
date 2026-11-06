@@ -1,0 +1,1 @@
+# Regras do projeto DevTermo
