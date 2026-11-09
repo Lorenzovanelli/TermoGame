@@ -96,6 +96,3 @@ Pendente (marcado com `TODO [Integrante N]` no codigo):
 4. Estrategia para palavras de tamanhos diferentes e valores de `GameRules`.
 5. Ranking lido direto do Firestore ou espelhado no Room.
 6. Se o `google-services.json` vai para o Git.
-
-## Observacao
-Este esqueleto foi gerado sem compilar no Android Studio. Na primeira abertura, faca o Gradle Sync e corrija eventuais avisos de versao sugeridos pela IDE.
