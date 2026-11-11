@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
 class AdminViewModel(
     private val wordRepository: WordRepository,
     private val sessionRepository: SessionRepository
@@ -31,7 +32,6 @@ class AdminViewModel(
                 .catch { e -> _uiState.update { it.copy(erro = "Erro ao carregar palavras: ${e.message}") } }
                 .collect { (todas, f) ->
                     val categorias = todas.map { it.categoria }.distinct().sorted()
-                    // Se a categoria filtrada deixou de existir (ultima palavra excluida), o filtro e ignorado.
                     val categoria = f.categoria?.takeIf { it in categorias }
                     val filtradas = todas
                         .filter { categoria == null || it.categoria == categoria }
@@ -55,6 +55,7 @@ class AdminViewModel(
     fun onBuscaChange(texto: String) = filtros.update { it.copy(busca = texto) }
     fun onCategoriaChange(categoria: String?) = filtros.update { it.copy(categoria = categoria) }
     fun onDificuldadeChange(dificuldade: String?) = filtros.update { it.copy(dificuldade = dificuldade) }
+
     fun iniciarEdicao(id: Int?) {
         if (id == null) {
             _uiState.update { it.copy(palavraEmEdicao = null) }
@@ -107,6 +108,7 @@ class AdminViewModel(
             }
         }
     }
+
     fun sincronizar() {
         if (!permitirEscrita()) return
         viewModelScope.launch {
@@ -133,6 +135,7 @@ class AdminViewModel(
     fun limparMensagens() {
         _uiState.update { it.copy(erro = null, mensagemSucesso = null) }
     }
+
     private fun permitirEscrita(): Boolean {
         val ok = sessionRepository.isAdmin()
         if (!ok) _uiState.update { it.copy(erro = "Acesso restrito ao administrador.") }

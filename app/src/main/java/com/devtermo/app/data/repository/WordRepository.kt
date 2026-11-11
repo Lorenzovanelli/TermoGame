@@ -10,6 +10,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.cancellation.CancellationException
+
+/**
+ * Responsaveis: Integrante 4 (parte local) e Integrante 5 (sincronizacao).
+ * Room e a fonte principal. Firestore e a fonte compartilhada.
+ * Nunca assume que gravar em um lado atualizou o outro: o campo sincronizado registra pendencias.
+ */
 class WordRepository(
     private val dao: PalavraDao,
     private val remote: FirebaseDataSource
@@ -17,6 +23,11 @@ class WordRepository(
     val palavras: Flow<List<Palavra>> = dao.observarTodas().map { lista -> lista.map { it.toDomain() } }
 
     val total: Flow<Int> = dao.observarTotal()
+
+    /**
+     * Salva no Room e tenta enviar ao Firestore.
+     * Success(true) = salvo nas duas fontes. Success(false) = salvo so local (pendente de sincronizacao).
+     */
     suspend fun salvar(palavra: Palavra): AppResult<Boolean> {
         val local = when (
             val r = safeCall("Não foi possível salvar a palavra no banco local.") {
@@ -43,6 +54,7 @@ class WordRepository(
             AppResult.Success(false)
         }
     }
+
     private suspend fun enviar(entidade: PalavraEntity) {
         val remoteId = entidade.remoteId ?: remote.novoIdPalavra()
         val comId = entidade.copy(remoteId = remoteId)
@@ -50,6 +62,8 @@ class WordRepository(
         remote.salvarPalavra(remoteId, comId.toDomain())
         dao.atualizar(comId.copy(sincronizado = true))
     }
+
+    /** Exclui no Room e tenta excluir no Firestore. Success(false) = remoto nao foi atualizado. */
     suspend fun excluir(id: Int): AppResult<Boolean> {
         val remoteId = when (
             val r = safeCall("Não foi possível excluir a palavra no banco local.") {
@@ -72,12 +86,14 @@ class WordRepository(
             AppResult.Success(false)
         }
     }
+
     suspend fun sincronizarPendentes(): AppResult<Int> =
         safeCall("Falha ao sincronizar com a nuvem. Verifique a conexão.") {
             val pendentes = dao.listarPendentes()
             pendentes.forEach { enviar(it) }
             pendentes.size
         }
+
     suspend fun importarCatalogoRemoto(): AppResult<Int> =
         safeCall("Não foi possível baixar o catálogo da nuvem.") {
             val remotas = remote.buscarPalavras()
@@ -102,6 +118,11 @@ class WordRepository(
             }
             importadas
         }
+
+    /**
+     * Sorteia uma palavra da categoria e dificuldade.
+     * DECISAO PENDENTE: estrategia para palavras de tamanhos diferentes.
+     */
     suspend fun sortearParaPartida(categoria: String, dificuldade: String): AppResult<Palavra> {
         val candidatas = when (
             val r = safeCall("Não foi possível buscar palavras no banco local.") {
@@ -119,6 +140,8 @@ class WordRepository(
 
     suspend fun buscarPorId(id: Int): AppResult<Palavra?> =
         safeCall("Não foi possível carregar a palavra.") { dao.buscarPorId(id)?.toDomain() }
+
+    /** Carga inicial para o jogo funcionar na primeira abertura. O catalogo real e gerido pelo admin. */
     suspend fun semearSeVazio() {
         try {
             if (dao.contar() > 0) return
@@ -138,6 +161,7 @@ class WordRepository(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
+            // Falha na carga inicial nao impede o uso do app.
         }
     }
 }

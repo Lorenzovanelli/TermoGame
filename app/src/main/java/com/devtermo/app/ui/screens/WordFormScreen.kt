@@ -68,6 +68,7 @@ fun WordFormScreen(
         }
     }
 }
+
 @Composable
 private fun CampoMenu(
     rotulo: String,

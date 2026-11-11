@@ -12,7 +12,9 @@ class FirebaseDataSource(
     private val firestoreProvider: () -> FirebaseFirestore = { FirebaseFirestore.getInstance() }
 ) {
     private val palavras get() = firestoreProvider().collection(COLECAO_PALAVRAS)
+
     fun novoIdPalavra(): String = palavras.document().id
+
     suspend fun salvarPalavra(remoteId: String, palavra: Palavra) {
         val dados = mapOf(
             "palavra" to palavra.palavra,
@@ -26,6 +28,7 @@ class FirebaseDataSource(
     suspend fun excluirPalavra(remoteId: String) {
         comLimite { palavras.document(remoteId).delete().await() }
     }
+
     suspend fun buscarPalavras(): List<Palavra> = comLimite {
         palavras.get(Source.SERVER).await().documents.mapNotNull { doc ->
             val texto = doc.getString("palavra") ?: return@mapNotNull null
@@ -39,12 +42,14 @@ class FirebaseDataSource(
             )
         }
     }
+
     private suspend fun <T> comLimite(bloco: suspend () -> T): T =
         try {
             withTimeout(LIMITE_MS) { bloco() }
         } catch (e: TimeoutCancellationException) {
             throw IOException("Sem resposta do Firestore.", e)
         }
+
     private companion object {
         const val COLECAO_PALAVRAS = "palavras"
         const val LIMITE_MS = 10_000L
