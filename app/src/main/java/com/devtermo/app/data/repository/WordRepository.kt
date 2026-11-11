@@ -8,6 +8,7 @@ import com.devtermo.app.model.Palavra
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.flow.catch
 
 /**
  * Responsaveis: Integrante 4 (parte local) e Integrante 5 (sincronizacao).
@@ -18,9 +19,11 @@ class WordRepository(
     private val dao: PalavraDao,
     private val remote: FirebaseDataSource
 ) {
-    val palavras: Flow<List<Palavra>> = dao.observarTodas().map { lista -> lista.map { it.toDomain() } }
+    val palavras: Flow<List<Palavra>> = dao.observarTodas()
+        .map { lista -> lista.map { it.toDomain() } }
+        .catch { emit(emptyList()) }
 
-    val total: Flow<Int> = dao.observarTotal()
+    val total: Flow<Int> = dao.observarTotal().catch { emit(0) }
 
     /**
      * Salva no Room e tenta enviar ao Firestore.

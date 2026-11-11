@@ -1,10 +1,9 @@
 package com.devtermo.app.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.devtermo.app.data.local.entity.PalavraEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -33,10 +32,10 @@ interface PalavraDao {
     @Query("SELECT COUNT(*) FROM palavras")
     fun observarTotal(): Flow<Int>
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun inserir(palavra: PalavraEntity): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun inserirTodas(palavras: List<PalavraEntity>)
 
     @Update
