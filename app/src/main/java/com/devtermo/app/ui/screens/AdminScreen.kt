@@ -18,7 +18,6 @@ import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.AdminUiState
 import com.devtermo.app.viewmodel.ProfileUiState
 
-/** Tela 5 - Responsavel: Integrante 5. TODO: palavras mais utilizadas. */
 @Composable
 fun AdminScreen(
     state: AdminUiState,
@@ -38,7 +37,11 @@ fun AdminScreen(
         Button(onClick = onGerenciar, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.words_titulo))
         }
-        OutlinedButton(onClick = onSincronizar, modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            onClick = onSincronizar,
+            enabled = !state.isLoading,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text("Sincronizar com a nuvem")
         }
     }

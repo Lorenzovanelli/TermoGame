@@ -1,6 +1,7 @@
 package com.devtermo.app.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -21,12 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devtermo.app.R
+import com.devtermo.app.model.Categorias
 import com.devtermo.app.model.Dificuldades
 import com.devtermo.app.model.Palavra
 import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.AdminUiState
 
-/** Tela 7 - Responsavel: Integrante 5. Create e Update. TODO: trocar campos de texto por menus (categoria e dificuldade). */
 @Composable
 fun WordFormScreen(
     state: AdminUiState,
@@ -35,7 +38,7 @@ fun WordFormScreen(
 ) {
     val original = state.palavraEmEdicao
     var texto by remember(original) { mutableStateOf(original?.palavra.orEmpty()) }
-    var categoria by remember(original) { mutableStateOf(original?.categoria.orEmpty()) }
+    var categoria by remember(original) { mutableStateOf(original?.categoria ?: Categorias.todas.first()) }
     var dificuldade by remember(original) { mutableStateOf(original?.dificuldade ?: Dificuldades.FACIL) }
     var dica by remember(original) { mutableStateOf(original?.dica.orEmpty()) }
 
@@ -46,10 +49,8 @@ fun WordFormScreen(
         ScreenTitle(stringResource(R.string.form_titulo))
         OutlinedTextField(value = texto, onValueChange = { texto = it }, label = { Text("Palavra") },
             singleLine = true, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = categoria, onValueChange = { categoria = it }, label = { Text("Categoria") },
-            singleLine = true, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = dificuldade, onValueChange = { dificuldade = it }, label = { Text("Dificuldade") },
-            singleLine = true, modifier = Modifier.fillMaxWidth())
+        CampoMenu(rotulo = "Categoria", valor = categoria, opcoes = Categorias.todas, onSelecionar = { categoria = it })
+        CampoMenu(rotulo = "Dificuldade", valor = dificuldade, opcoes = Dificuldades.todas, onSelecionar = { dificuldade = it })
         OutlinedTextField(value = dica, onValueChange = { dica = it }, label = { Text("Dica") },
             modifier = Modifier.fillMaxWidth())
         state.erro?.let { Text(it) }
@@ -64,6 +65,32 @@ fun WordFormScreen(
                 }
             ) { Text(stringResource(R.string.form_salvar)) }
             OutlinedButton(onClick = onCancelar) { Text(stringResource(R.string.form_cancelar)) }
+        }
+    }
+}
+
+@Composable
+private fun CampoMenu(
+    rotulo: String,
+    valor: String,
+    opcoes: List<String>,
+    onSelecionar: (String) -> Unit
+) {
+    var aberto by remember { mutableStateOf(false) }
+    Box {
+        OutlinedButton(onClick = { aberto = true }, modifier = Modifier.fillMaxWidth()) {
+            Text("$rotulo: $valor")
+        }
+        DropdownMenu(expanded = aberto, onDismissRequest = { aberto = false }) {
+            opcoes.forEach { opcao ->
+                DropdownMenuItem(
+                    text = { Text(opcao) },
+                    onClick = {
+                        onSelecionar(opcao)
+                        aberto = false
+                    }
+                )
+            }
         }
     }
 }

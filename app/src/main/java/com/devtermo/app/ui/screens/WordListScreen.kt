@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -17,11 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devtermo.app.R
+import com.devtermo.app.model.Dificuldades
 import com.devtermo.app.ui.components.MensagemStatus
 import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.AdminUiState
 
-/** Tela 6 - Responsavel: Integrante 5. LazyColumn com dados reais do Room (via Flow). */
 @Composable
 fun WordListScreen(
     state: AdminUiState,
@@ -33,7 +35,6 @@ fun WordListScreen(
     onExcluir: (Int) -> Unit,
     onLimparMensagens: () -> Unit
 ) {
-    // TODO [Integrante 5]: chips de filtro por categoria e dificuldade usando onCategoria e onDificuldade.
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -46,6 +47,26 @@ fun WordListScreen(
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(state.categoriasDisponiveis, key = { it }) { categoria ->
+                val selecionada = categoria == state.filtroCategoria
+                FilterChip(
+                    selected = selecionada,
+                    onClick = { onCategoria(if (selecionada) null else categoria) },
+                    label = { Text(categoria) }
+                )
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Dificuldades.todas.forEach { dificuldade ->
+                val selecionada = dificuldade == state.filtroDificuldade
+                FilterChip(
+                    selected = selecionada,
+                    onClick = { onDificuldade(if (selecionada) null else dificuldade) },
+                    label = { Text(dificuldade) }
+                )
+            }
+        }
         MensagemStatus(state.erro, state.mensagemSucesso, onLimparMensagens)
         Button(onClick = onAdicionar, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.words_adicionar))
