@@ -1,19 +1,15 @@
 package com.devtermo.app.data.repository
 
 import com.devtermo.app.data.local.dao.PalavraDao
+import com.devtermo.app.data.local.entity.PalavraEntity
 import com.devtermo.app.data.remote.FirebaseDataSource
 import com.devtermo.app.model.Categorias
 import com.devtermo.app.model.Dificuldades
 import com.devtermo.app.model.Palavra
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.cancellation.CancellationException
-
-/**
- * Responsaveis: Integrante 4 (parte local) e Integrante 5 (sincronizacao).
- * Room e a fonte principal. Firestore e a fonte compartilhada.
- * Nunca assume que gravar em um lado atualizou o outro: o campo sincronizado registra pendencias.
- */
 class WordRepository(
     private val dao: PalavraDao,
     private val remote: FirebaseDataSource
@@ -21,11 +17,6 @@ class WordRepository(
     val palavras: Flow<List<Palavra>> = dao.observarTodas().map { lista -> lista.map { it.toDomain() } }
 
     val total: Flow<Int> = dao.observarTotal()
-
-    /**
-     * Salva no Room e tenta enviar ao Firestore.
-     * Success(true) = salvo nas duas fontes. Success(false) = salvo so local (pendente de sincronizacao).
-     */
     suspend fun salvar(palavra: Palavra): AppResult<Boolean> {
         val local = when (
             val r = safeCall("Não foi possível salvar a palavra no banco local.") {
@@ -44,8 +35,7 @@ class WordRepository(
         }
 
         return try {
-            val remoteId = remote.salvarPalavra(local)
-            dao.atualizar(local.copy(remoteId = remoteId, sincronizado = true).toEntity())
+            enviar(local.toEntity())
             AppResult.Success(true)
         } catch (e: CancellationException) {
             throw e
@@ -53,8 +43,13 @@ class WordRepository(
             AppResult.Success(false)
         }
     }
-
-    /** Exclui no Room e tenta excluir no Firestore. Success(false) = remoto nao foi atualizado. */
+    private suspend fun enviar(entidade: PalavraEntity) {
+        val remoteId = entidade.remoteId ?: remote.novoIdPalavra()
+        val comId = entidade.copy(remoteId = remoteId)
+        dao.atualizar(comId)
+        remote.salvarPalavra(remoteId, comId.toDomain())
+        dao.atualizar(comId.copy(sincronizado = true))
+    }
     suspend fun excluir(id: Int): AppResult<Boolean> {
         val remoteId = when (
             val r = safeCall("Não foi possível excluir a palavra no banco local.") {
@@ -74,43 +69,39 @@ class WordRepository(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            // TODO [Integrante 5]: registrar exclusoes pendentes para reenviar depois.
             AppResult.Success(false)
         }
     }
-
-    /** Reenvia ao Firestore as palavras alteradas localmente que ainda nao foram sincronizadas. */
     suspend fun sincronizarPendentes(): AppResult<Int> =
         safeCall("Falha ao sincronizar com a nuvem. Verifique a conexão.") {
             val pendentes = dao.listarPendentes()
-            pendentes.forEach { entidade ->
-                val remoteId = remote.salvarPalavra(entidade.toDomain())
-                dao.atualizar(entidade.copy(remoteId = remoteId, sincronizado = true))
-            }
+            pendentes.forEach { enviar(it) }
             pendentes.size
         }
-
-    /**
-     * Baixa o catalogo remoto para o Room. Palavras locais pendentes nao sao sobrescritas.
-     * Politica de conflito (sugestao): remoto prevalece, exceto pendencias locais. Confirmar com o grupo.
-     */
     suspend fun importarCatalogoRemoto(): AppResult<Int> =
         safeCall("Não foi possível baixar o catálogo da nuvem.") {
+            val remotas = remote.buscarPalavras()
+            val locais = dao.observarTodas().first()
             var importadas = 0
-            remote.buscarPalavras().forEach { doc ->
-                val existente = doc.remoteId?.let { dao.buscarPorRemoteId(it) }
-                if (existente == null || existente.sincronizado) {
-                    dao.inserir(doc.copy(id = existente?.id ?: 0, sincronizado = true).toEntity())
-                    importadas++
+            for (doc in remotas) {
+                val existente = locais.firstOrNull { it.remoteId == doc.remoteId }
+                    ?: locais.firstOrNull { it.remoteId == null && it.palavra == doc.palavra }
+                val remota = doc.copy(id = existente?.id ?: 0).toEntity()
+                when {
+                    existente == null -> {
+                        dao.inserir(remota)
+                        importadas++
+                    }
+                    !existente.sincronizado ->
+                        if (existente.remoteId == null) dao.atualizar(existente.copy(remoteId = doc.remoteId))
+                    existente != remota -> {
+                        dao.atualizar(remota)
+                        importadas++
+                    }
                 }
             }
             importadas
         }
-
-    /**
-     * Sorteia uma palavra da categoria e dificuldade.
-     * DECISAO PENDENTE: estrategia para palavras de tamanhos diferentes.
-     */
     suspend fun sortearParaPartida(categoria: String, dificuldade: String): AppResult<Palavra> {
         val candidatas = when (
             val r = safeCall("Não foi possível buscar palavras no banco local.") {
@@ -128,8 +119,6 @@ class WordRepository(
 
     suspend fun buscarPorId(id: Int): AppResult<Palavra?> =
         safeCall("Não foi possível carregar a palavra.") { dao.buscarPorId(id)?.toDomain() }
-
-    /** Carga inicial para o jogo funcionar na primeira abertura. O catalogo real e gerido pelo admin. */
     suspend fun semearSeVazio() {
         try {
             if (dao.contar() > 0) return
@@ -149,7 +138,6 @@ class WordRepository(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            // Falha na carga inicial nao impede o uso do app.
         }
     }
 }

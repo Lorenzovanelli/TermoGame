@@ -2,42 +2,32 @@ package com.devtermo.app.data.remote
 
 import com.devtermo.app.model.Palavra
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
+import java.io.IOException
 
-/**
- * Responsavel: Integrante 5.
- * Apenas le e escreve no Firestore. Nao conhece Room, ViewModel nem UI.
- * Requer app/google-services.json configurado. As excecoes sobem para o Repository tratar.
- */
 class FirebaseDataSource(
-    // Acesso preguicoso: sem google-services.json o erro acontece na chamada (tratado no Repository), nao na abertura do app.
     private val firestoreProvider: () -> FirebaseFirestore = { FirebaseFirestore.getInstance() }
 ) {
     private val palavras get() = firestoreProvider().collection(COLECAO_PALAVRAS)
-
-    /** Cria ou atualiza a palavra e devolve o id do documento. */
-    suspend fun salvarPalavra(palavra: Palavra): String {
+    fun novoIdPalavra(): String = palavras.document().id
+    suspend fun salvarPalavra(remoteId: String, palavra: Palavra) {
         val dados = mapOf(
             "palavra" to palavra.palavra,
             "categoria" to palavra.categoria,
             "dificuldade" to palavra.dificuldade,
             "dica" to palavra.dica
         )
-        val id = palavra.remoteId
-        return if (id == null) {
-            palavras.add(dados).await().id
-        } else {
-            palavras.document(id).set(dados).await()
-            id
-        }
+        comLimite { palavras.document(remoteId).set(dados).await() }
     }
 
     suspend fun excluirPalavra(remoteId: String) {
-        palavras.document(remoteId).delete().await()
+        comLimite { palavras.document(remoteId).delete().await() }
     }
-
-    suspend fun buscarPalavras(): List<Palavra> =
-        palavras.get().await().documents.mapNotNull { doc ->
+    suspend fun buscarPalavras(): List<Palavra> = comLimite {
+        palavras.get(Source.SERVER).await().documents.mapNotNull { doc ->
             val texto = doc.getString("palavra") ?: return@mapNotNull null
             Palavra(
                 palavra = texto,
@@ -48,10 +38,15 @@ class FirebaseDataSource(
                 sincronizado = true
             )
         }
-
-    // TODO [Integrante 5/6]: ranking compartilhado (colecao "ranking") quando o grupo confirmar a decisao.
-
+    }
+    private suspend fun <T> comLimite(bloco: suspend () -> T): T =
+        try {
+            withTimeout(LIMITE_MS) { bloco() }
+        } catch (e: TimeoutCancellationException) {
+            throw IOException("Sem resposta do Firestore.", e)
+        }
     private companion object {
         const val COLECAO_PALAVRAS = "palavras"
+        const val LIMITE_MS = 10_000L
     }
 }
