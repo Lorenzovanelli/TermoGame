@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_categoria">Categoria</string>
+    <string name="home_dificuldade">Dificuldade</string>
+    <string name="home_vitorias">Vitórias</string>
+    <string name="home_derrotas">Derrotas</string>
+    <string name="result_pontuacao">Pontuação: %1$d</string>
+    <string name="result_tentativas">Tentativas: %1$d de %2$d</string>
+</resources>

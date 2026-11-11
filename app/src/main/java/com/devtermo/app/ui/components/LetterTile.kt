@@ -13,14 +13,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.devtermo.app.logic.LetterState
 import com.devtermo.app.ui.theme.DevTermoColors
 
-/** Responsavel: Integrante 2. Quadrado de uma letra. estado == null: ainda nao avaliada. */
 @Composable
-fun LetterTile(letra: Char?, estado: LetterState?, modifier: Modifier = Modifier) {
+fun LetterTile(
+    letra: Char?,
+    estado: LetterState?,
+    modifier: Modifier = Modifier,
+    tamanho: Dp = 44.dp
+) {
     val fundo = when (estado) {
         LetterState.CORRECT -> DevTermoColors.Correto
         LetterState.PRESENT -> DevTermoColors.Presente
@@ -28,21 +33,26 @@ fun LetterTile(letra: Char?, estado: LetterState?, modifier: Modifier = Modifier
         null -> Color.Transparent
     }
     val corTexto = if (estado == null) MaterialTheme.colorScheme.onSurface else Color.White
+    val corBorda = when {
+        estado != null -> fundo
+        letra != null -> MaterialTheme.colorScheme.onSurface
+        else -> MaterialTheme.colorScheme.outline
+    }
     val forma = RoundedCornerShape(4.dp)
 
     Box(
         modifier = modifier
-            .size(44.dp)
+            .size(tamanho)
             .clip(forma)
             .background(fundo)
-            .border(2.dp, MaterialTheme.colorScheme.outline, forma),
+            .border(2.dp, corBorda, forma),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = letra?.toString().orEmpty(),
             color = corTexto,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp
+            fontSize = (tamanho.value * 0.5f).sp
         )
     }
 }
