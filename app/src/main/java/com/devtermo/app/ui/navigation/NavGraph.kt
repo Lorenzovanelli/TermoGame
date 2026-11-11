@@ -15,8 +15,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.devtermo.app.model.Categorias
-import com.devtermo.app.model.Dificuldades
 import com.devtermo.app.model.Perfil
 import com.devtermo.app.ui.screens.AdminScreen
 import com.devtermo.app.ui.screens.GameScreen
@@ -71,10 +69,10 @@ fun DevTermoNavHost(factory: ViewModelFactory) {
     LaunchedEffect(rotaAtual) {
         val perfil = profile.perfil
         val bloqueada = rotaAtual != null && rotaAtual != Routes.PERFIL && (
-            perfil == null ||
-                (perfil == Perfil.JOGADOR && rotaAtual in Routes.somenteAdmin) ||
-                (perfil == Perfil.ADMIN && rotaAtual in Routes.somenteJogador)
-            )
+                perfil == null ||
+                        (perfil == Perfil.JOGADOR && rotaAtual in Routes.somenteAdmin) ||
+                        (perfil == Perfil.ADMIN && rotaAtual in Routes.somenteJogador)
+                )
         if (bloqueada) {
             navController.navigate(Routes.PERFIL) { popUpTo(navController.graph.id) { inclusive = true } }
         }
@@ -106,9 +104,8 @@ fun DevTermoNavHost(factory: ViewModelFactory) {
             composable(Routes.HOME) {
                 HomeScreen(
                     state = profile,
-                    onIniciar = {
-                        // Selecao de categoria e dificuldade: Integrante 2 (por enquanto valores padrao).
-                        gameVm.iniciarPartida(Categorias.LINGUAGENS, Dificuldades.FACIL)
+                    onIniciar = { categoria, dificuldade ->
+                        gameVm.iniciarPartida(categoria, dificuldade)
                         navController.navigate(Routes.GAME)
                     },
                     onRanking = { navController.navegarPelaBarra(Routes.RANKING, Routes.HOME) }
