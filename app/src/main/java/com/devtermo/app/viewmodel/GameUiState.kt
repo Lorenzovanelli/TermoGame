@@ -1,5 +1,6 @@
 package com.devtermo.app.viewmodel
 
+import com.devtermo.app.logic.GameRules
 import com.devtermo.app.logic.LetterState
 import com.devtermo.app.model.Categorias
 import com.devtermo.app.model.Dificuldades
@@ -26,4 +27,8 @@ data class GameUiState(
 ) {
     val tentativasRestantes: Int get() = maxTentativas - tentativas.size
     val tamanhoPalavra: Int get() = palavraSecreta.length
+
+    /** Cor de cada tecla do teclado virtual, para o Integrante 2 pintar as teclas. */
+    val estadoTeclas: Map<Char, LetterState>
+        get() = GameRules.estadoDasTeclas(tentativas.map { it.palpite to it.estados })
 }

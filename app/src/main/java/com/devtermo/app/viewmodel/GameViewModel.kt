@@ -7,10 +7,10 @@ import com.devtermo.app.data.repository.MatchRepository
 import com.devtermo.app.data.repository.SessionRepository
 import com.devtermo.app.data.repository.WordRepository
 import com.devtermo.app.logic.GameRules
-import com.devtermo.app.logic.LetterState
 import com.devtermo.app.logic.WordValidator
 import com.devtermo.app.model.Partida
 import com.devtermo.app.model.Resultados
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,34 +27,48 @@ class GameViewModel(
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
+    // Guardado para cancelar um sorteio ainda em andamento se o jogador iniciar outra partida.
+    private var inicioJob: Job? = null
+
     fun iniciarPartida(categoria: String, dificuldade: String) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, erro = null) }
+        inicioJob?.cancel()
+        inicioJob = viewModelScope.launch {
+            // Zera o estado ja no inicio: sem isso, uma falha no sorteio mostraria o tabuleiro da partida anterior.
+            _uiState.update {
+                GameUiState(categoria = categoria, dificuldade = dificuldade, isLoading = true)
+            }
             when (val r = wordRepository.sortearParaPartida(categoria, dificuldade)) {
-                is AppResult.Success -> _uiState.value = GameUiState(
-                    status = GameStatus.JOGANDO,
-                    categoria = categoria,
-                    dificuldade = dificuldade,
-                    palavraId = r.data.id,
-                    palavraSecreta = WordValidator.normalizar(r.data.palavra),
-                    dica = r.data.dica,
-                    maxTentativas = GameRules.maxTentativas(dificuldade)
-                )
+                is AppResult.Success -> _uiState.update {
+                    GameUiState(
+                        status = GameStatus.JOGANDO,
+                        categoria = categoria,
+                        dificuldade = dificuldade,
+                        palavraId = r.data.id,
+                        palavraSecreta = WordValidator.normalizar(r.data.palavra),
+                        dica = r.data.dica,
+                        maxTentativas = GameRules.maxTentativas(dificuldade)
+                    )
+                }
                 is AppResult.Error -> _uiState.update { it.copy(isLoading = false, erro = r.mensagem) }
             }
         }
     }
 
     fun onLetra(letra: Char) {
+        // Aceita so letras; "é" vindo do teclado fisico vira "E" (mesma normalizacao do validador).
+        val normalizada = WordValidator.normalizar(letra.toString())
+        if (normalizada.length != 1 || !normalizada[0].isLetter()) return
+
         _uiState.update { s ->
             if (s.status != GameStatus.JOGANDO || s.tentativaAtual.length >= s.tamanhoPalavra) s
-            else s.copy(tentativaAtual = s.tentativaAtual + letra.uppercaseChar())
+            else s.copy(tentativaAtual = s.tentativaAtual + normalizada, erro = null)
         }
     }
 
     fun onApagar() {
         _uiState.update { s ->
-            if (s.status != GameStatus.JOGANDO) s else s.copy(tentativaAtual = s.tentativaAtual.dropLast(1))
+            if (s.status != GameStatus.JOGANDO) s
+            else s.copy(tentativaAtual = s.tentativaAtual.dropLast(1), erro = null)
         }
     }
 
@@ -62,14 +76,14 @@ class GameViewModel(
         val s = _uiState.value
         if (s.status != GameStatus.JOGANDO) return
         if (s.tentativaAtual.length != s.tamanhoPalavra) {
-            _uiState.update { it.copy(erro = "A palavra precisa ter ${s.tamanhoPalavra} letras.") }
+            _uiState.update { it.copy(erro = GameMensagens.palavraIncompleta(s.tamanhoPalavra)) }
             return
         }
 
         val estados = WordValidator.avaliar(s.tentativaAtual, s.palavraSecreta)
         val tentativas = s.tentativas + Tentativa(s.tentativaAtual, estados)
-        val venceu = estados.all { it == LetterState.CORRECT }
-        val acabou = venceu || tentativas.size >= s.maxTentativas
+        val venceu = GameRules.acertou(estados)
+        val acabou = GameRules.terminou(venceu, tentativas.size, s.maxTentativas)
         val pontos = if (acabou) {
             GameRules.calcularPontuacao(venceu, tentativas.size, s.maxTentativas, s.dificuldade)
         } else 0
@@ -102,7 +116,9 @@ class GameViewModel(
                 data = System.currentTimeMillis()
             )
             when (val r = matchRepository.registrar(partida)) {
-                is AppResult.Success -> Unit
+                is AppResult.Success -> _uiState.update {
+                    it.copy(mensagemSucesso = GameMensagens.PARTIDA_REGISTRADA)
+                }
                 is AppResult.Error -> _uiState.update { it.copy(erro = r.mensagem) }
             }
         }

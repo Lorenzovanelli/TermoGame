@@ -1,0 +1,25 @@
+feat: implementa lógica do jogo (regras, validação e GameViewModel)
+
+logic/GameRules
+- extrai os valores fixos para constantes nomeadas (tentativas, pontos, bônus)
+- adiciona acertou() e terminou() para decidir vitória e fim de partida
+- adiciona estadoDasTeclas() com a melhor informação de cada letra
+
+viewmodel/GameViewModel
+- onLetra aceita só letras e normaliza acentos
+- onLetra e onApagar limpam o erro ao digitar
+- iniciarPartida zera o estado no início (evita mostrar o tabuleiro anterior se o sorteio falhar)
+- iniciarPartida cancela o sorteio anterior se o jogador iniciar outra partida
+- troca atribuição direta do estado por update { }
+- usa GameRules.acertou/terminou no lugar de lógica solta
+- registra mensagemSucesso ao salvar a partida
+
+viewmodel/GameUiState
+- adiciona estadoTeclas (cor de cada tecla) para o teclado virtual
+
+viewmodel/GameMensagens (novo)
+- concentra os textos da partida em um único lugar
+
+test
+- GameRulesTest: tentativas, pontuação, fim de partida e teclado
+- WordValidatorCasosExtraTest: letras repetidas, acentos e tamanhos diferentes
