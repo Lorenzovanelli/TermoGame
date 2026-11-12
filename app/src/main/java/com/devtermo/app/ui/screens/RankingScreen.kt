@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,11 +18,14 @@ import com.devtermo.app.R
 import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.ProfileUiState
 
-/** Tela 3 - Responsavel: Integrante 6. TODO: ranking compartilhado via Firestore e visual dos itens. */
+/** Tela 3 - Responsavel: Integrante 6. Stateless: recebe apenas o estado. */
 @Composable
 fun RankingScreen(state: ProfileUiState) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         ScreenTitle(stringResource(R.string.ranking_titulo))
+        state.erro?.let { mensagem ->
+            Text(mensagem, color = MaterialTheme.colorScheme.error)
+        }
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(state.ranking, key = { it.jogador }) { item ->
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
