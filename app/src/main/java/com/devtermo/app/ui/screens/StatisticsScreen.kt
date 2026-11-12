@@ -13,7 +13,7 @@ import com.devtermo.app.R
 import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.ProfileUiState
 
-/** Tela 8 - Responsavel: Integrante 6. TODO: palavras mais dificeis e mais utilizadas. */
+/** Tela 8 - Responsavel: Integrante 6. Stateless: recebe apenas o estado. */
 @Composable
 fun StatisticsScreen(state: ProfileUiState) {
     Column(
@@ -21,7 +21,9 @@ fun StatisticsScreen(state: ProfileUiState) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ScreenTitle(stringResource(R.string.stats_titulo))
-        Text("Total de partidas: ${state.totalPartidas}")
+        Text("Partidas: ${state.partidasJogador}")
         Text("Taxa de acerto: ${(state.taxaAcerto * 100).toInt()}%")
+        Text("Pontuação total: ${state.pontuacaoTotal}")
+        Text("Média de tentativas nas vitórias: ${"%.1f".format(state.mediaTentativasVitoria)}")
     }
 }
