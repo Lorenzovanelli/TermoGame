@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.devtermo.app.R
+import com.devtermo.app.ui.components.DevTermoLogo
 
 /** Tela 0 - Responsavel: Integrante 1. Identificacao de perfil (controle demonstrativo). */
 @Composable
@@ -24,7 +25,7 @@ fun ProfileSelectScreen(onJogador: () -> Unit, onAdmin: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // TODO [Integrante 2]: logo do DevTermo.
+        DevTermoLogo()
         Text(stringResource(R.string.app_name), style = MaterialTheme.typography.displayMedium)
         Text(stringResource(R.string.app_slogan), style = MaterialTheme.typography.bodyLarge)
         Button(onClick = onJogador, modifier = Modifier.fillMaxWidth()) {

@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.devtermo.app.R
 
 /** Titulo padrao das telas. */
 @Composable
@@ -26,6 +29,6 @@ fun MensagemStatus(erro: String?, sucesso: String?, onFechar: () -> Unit) {
     val cor = if (erro != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
         Text(text = texto, color = cor)
-        androidx.compose.material3.TextButton(onClick = onFechar) { Text("OK") }
+        TextButton(onClick = onFechar) { Text(stringResource(R.string.acao_ok)) }
     }
 }
