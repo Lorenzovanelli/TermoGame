@@ -72,8 +72,8 @@ class AdminViewModel(
     fun salvarPalavra(palavra: Palavra) {
         if (!permitirEscrita()) return
         val texto = WordValidator.normalizar(palavra.palavra)
-        if (texto.length < 3 || !texto.all { it.isLetter() }) {
-            _uiState.update { it.copy(erro = "Informe uma palavra com ao menos 3 letras, sem espaços ou números.") }
+         if (texto.isEmpty() || !texto.all { it.isLetter() }) {
+        _uiState.update { it.copy(erro = "Informe uma palavra com ao menos 1 letra, sem espaços, números ou símbolos.") }
             return
         }
         viewModelScope.launch {
