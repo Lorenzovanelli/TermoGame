@@ -9,7 +9,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Responsavel: Integrante 3. Testes das regras de tentativas, pontuacao e teclado. */
 class GameRulesTest {
 
     @Test
@@ -45,11 +44,8 @@ class GameRulesTest {
 
     @Test
     fun vitoriaMultiplicaPelaDificuldade() {
-        // MEDIO: 2 tentativas de 6 -> sobraram 4 -> (100 + 4*20) * 2
         assertEquals(360, GameRules.calcularPontuacao(true, 2, 6, Dificuldades.MEDIO))
-        // FACIL: 1 tentativa de 7 -> sobraram 6 -> (100 + 6*20) * 1
         assertEquals(220, GameRules.calcularPontuacao(true, 1, 7, Dificuldades.FACIL))
-        // DIFICIL: acertou na ultima tentativa -> sem bonus de sobra -> 100 * 3
         assertEquals(300, GameRules.calcularPontuacao(true, 5, 5, Dificuldades.DIFICIL))
     }
 
