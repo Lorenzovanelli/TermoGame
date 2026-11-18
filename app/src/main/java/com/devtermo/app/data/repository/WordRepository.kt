@@ -12,11 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.catch
 
-/**
- * Responsaveis: Integrante 4 (parte local) e Integrante 5 (sincronizacao).
- * Room e a fonte principal. Firestore e a fonte compartilhada.
- * Nunca assume que gravar em um lado atualizou o outro: o campo sincronizado registra pendencias.
- */
+
 class WordRepository(
     private val dao: PalavraDao,
     private val remote: FirebaseDataSource
@@ -27,10 +23,7 @@ class WordRepository(
 
     val total: Flow<Int> = dao.observarTotal().catch { emit(0) }
 
-    /**
-     * Salva no Room e tenta enviar ao Firestore.
-     * Success(true) = salvo nas duas fontes. Success(false) = salvo so local (pendente de sincronizacao).
-     */
+    
     suspend fun salvar(palavra: Palavra): AppResult<Boolean> {
         val local = when (
             val r = safeCall("Não foi possível salvar a palavra no banco local.") {
@@ -66,7 +59,6 @@ class WordRepository(
         dao.atualizar(comId.copy(sincronizado = true))
     }
 
-    /** Exclui no Room e tenta excluir no Firestore. Success(false) = remoto nao foi atualizado. */
     suspend fun excluir(id: Int): AppResult<Boolean> {
         val remoteId = when (
             val r = safeCall("Não foi possível excluir a palavra no banco local.") {
@@ -122,10 +114,6 @@ class WordRepository(
             importadas
         }
 
-    /**
-     * Sorteia uma palavra da categoria e dificuldade.
-     * DECISAO PENDENTE: estrategia para palavras de tamanhos diferentes.
-     */
     suspend fun sortearParaPartida(categoria: String, dificuldade: String): AppResult<Palavra> {
         val candidatas = when (
             val r = safeCall("Não foi possível buscar palavras no banco local.") {
@@ -144,7 +132,6 @@ class WordRepository(
     suspend fun buscarPorId(id: Int): AppResult<Palavra?> =
         safeCall("Não foi possível carregar a palavra.") { dao.buscarPorId(id)?.toDomain() }
 
-    /** Carga inicial para o jogo funcionar na primeira abertura. O catalogo real e gerido pelo admin. */
     suspend fun semearSeVazio() {
         try {
             if (dao.contar() > 0) return
@@ -164,7 +151,6 @@ class WordRepository(
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            // Falha na carga inicial nao impede o uso do app.
         }
     }
 }
