@@ -12,10 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
-/**
- * Responsavel: Integrante 1.
- * Cria uma unica vez banco, fonte remota e repositories, e entrega a ViewModelFactory.
- */
+
 class DevTermoApp : Application() {
 
     private val database by lazy { AppDatabase.getInstance(this) }
