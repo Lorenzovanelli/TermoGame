@@ -17,11 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/**
- * Responsavel: Integrante 6 (sessao: Integrante 1).
- * O ViewModel aplica filter, groupBy, map e sortedByDescending nas listas.
- * Os calculos de taxa e pontuacao ficam em logic (StatisticsCalculator).
- */
+
 class ProfileViewModel(
     private val matchRepository: MatchRepository,
     private val sessionRepository: SessionRepository
@@ -60,7 +56,6 @@ class ProfileViewModel(
         )
     }
 
-    /** groupBy por jogador, map para somar pontos, sortedByDescending para ordenar. */
     private fun montarRanking(todas: List<Partida>): List<RankingItem> =
         todas
             .groupBy { it.jogador }
