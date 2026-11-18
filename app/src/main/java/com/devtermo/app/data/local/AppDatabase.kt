@@ -11,7 +11,6 @@ import com.devtermo.app.data.local.dao.PartidaDao
 import com.devtermo.app.data.local.entity.PalavraEntity
 import com.devtermo.app.data.local.entity.PartidaEntity
 
-/** Responsavel: Integrante 4. Instancia unica (singleton). */
 @Database(
     entities = [PalavraEntity::class, PartidaEntity::class],
     version = 2,
@@ -26,7 +25,6 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var instance: AppDatabase? = null
 
-        /** v1 -> v2: chave estrangeira partidas.palavraId -> palavras.id (ON DELETE SET NULL). */
         private val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL(
