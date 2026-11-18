@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.room)
 }
 
-// O plugin do Google Services so e aplicado quando o google-services.json existir (Integrante 5).
 if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
 }
