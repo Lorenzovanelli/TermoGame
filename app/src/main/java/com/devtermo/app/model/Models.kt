@@ -1,9 +1,7 @@
 package com.devtermo.app.model
 
-/** Perfis de acesso do app. */
 enum class Perfil { JOGADOR, ADMIN }
 
-/** Modelo de dominio de uma palavra do catalogo. Usado pela UI e pelos ViewModels. */
 data class Palavra(
     val id: Int = 0,
     val palavra: String,
@@ -14,7 +12,6 @@ data class Palavra(
     val sincronizado: Boolean = false
 )
 
-/** Modelo de dominio do historico de partidas. */
 data class Partida(
     val id: Int = 0,
     val palavraId: Int,
@@ -25,7 +22,6 @@ data class Partida(
     val data: Long
 )
 
-/** Linha do ranking (calculada a partir das partidas). */
 data class RankingItem(
     val posicao: Int,
     val jogador: String,
