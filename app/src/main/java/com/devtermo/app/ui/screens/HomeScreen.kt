@@ -36,7 +36,6 @@ import com.devtermo.app.ui.components.DevTermoLogo
 import com.devtermo.app.ui.theme.DevTermoColors
 import com.devtermo.app.viewmodel.ProfileUiState
 
-/** Tela 1 - Responsavel: Integrante 2. Logo, resumo do jogador e selecao de categoria e dificuldade. */
 @Composable
 fun HomeScreen(
     state: ProfileUiState,
