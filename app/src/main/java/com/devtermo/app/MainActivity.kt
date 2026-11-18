@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import com.devtermo.app.ui.navigation.DevTermoNavHost
 import com.devtermo.app.ui.theme.DevTermoTheme
 
-/** Responsavel: Integrante 1. */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
