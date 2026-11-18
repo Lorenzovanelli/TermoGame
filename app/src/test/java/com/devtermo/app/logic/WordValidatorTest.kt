@@ -3,7 +3,6 @@ package com.devtermo.app.logic
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Responsavel: Integrante 3 (com apoio do Integrante 6). Testes da logica pura. */
 class WordValidatorTest {
 
     @Test
