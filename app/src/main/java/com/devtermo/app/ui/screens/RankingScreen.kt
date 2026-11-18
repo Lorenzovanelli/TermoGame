@@ -18,7 +18,6 @@ import com.devtermo.app.R
 import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.ProfileUiState
 
-/** Tela 3 - Responsavel: Integrante 6. Stateless: recebe apenas o estado. */
 @Composable
 fun RankingScreen(state: ProfileUiState) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
