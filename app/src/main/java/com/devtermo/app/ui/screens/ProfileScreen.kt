@@ -14,7 +14,6 @@ import com.devtermo.app.R
 import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.ProfileUiState
 
-/** Tela 4 - Responsavel: Integrante 6. TODO: preferencias do jogador. */
 @Composable
 fun ProfileScreen(state: ProfileUiState, onSair: () -> Unit) {
     Column(
