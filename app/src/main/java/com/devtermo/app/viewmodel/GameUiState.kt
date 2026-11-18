@@ -9,7 +9,6 @@ enum class GameStatus { AGUARDANDO, JOGANDO, VITORIA, DERROTA }
 
 data class Tentativa(val palpite: String, val estados: List<LetterState>)
 
-/** Responsavel: Integrante 3. Estado da funcionalidade de partida. */
 data class GameUiState(
     val status: GameStatus = GameStatus.AGUARDANDO,
     val categoria: String = Categorias.LINGUAGENS,
@@ -28,7 +27,6 @@ data class GameUiState(
     val tentativasRestantes: Int get() = maxTentativas - tentativas.size
     val tamanhoPalavra: Int get() = palavraSecreta.length
 
-    /** Cor de cada tecla do teclado virtual, para o Integrante 2 pintar as teclas. */
     val estadoTeclas: Map<Char, LetterState>
         get() = GameRules.estadoDasTeclas(tentativas.map { it.palpite to it.estados })
 }
