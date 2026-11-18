@@ -5,11 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-/**
- * Responsavel: Integrante 1 (com Integrante 6 no ProfileViewModel).
- * Sessao em memoria: perfil ativo e nome do jogador. Controle de acesso DEMONSTRATIVO
- * (sem autenticacao real). Registrar essa limitacao na documentacao.
- */
+
 class SessionRepository {
     private val _perfil = MutableStateFlow<Perfil?>(null)
     val perfil: StateFlow<Perfil?> = _perfil.asStateFlow()
