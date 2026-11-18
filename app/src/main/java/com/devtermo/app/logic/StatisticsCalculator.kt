@@ -3,12 +3,11 @@ package com.devtermo.app.logic
 import com.devtermo.app.model.Partida
 import com.devtermo.app.model.Resultados
 
-/** Responsavel: Integrante 6. Funcoes puras, sem Android, testaveis com testes unitarios. */
 data class EstatisticasJogador(
     val totalPartidas: Int = 0,
     val vitorias: Int = 0,
     val derrotas: Int = 0,
-    val taxaDeAcerto: Float = 0f,          // 0.0 a 1.0
+    val taxaDeAcerto: Float = 0f,        
     val pontuacaoTotal: Int = 0,
     val mediaTentativasVitoria: Float = 0f
 )
