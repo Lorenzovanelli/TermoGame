@@ -19,7 +19,6 @@ import com.devtermo.app.viewmodel.ProfileUiState
 import java.text.DateFormat
 import java.util.Date
 
-/** Responsavel: Integrante 6. TODO: visual dos itens e filtros complementares. */
 @Composable
 fun HistoryScreen(state: ProfileUiState) {
     val formato = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
