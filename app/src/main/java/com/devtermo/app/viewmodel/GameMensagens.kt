@@ -1,10 +1,5 @@
 package com.devtermo.app.viewmodel
 
-/**
- * Responsavel: Integrante 3.
- * O ViewModel nao tem Context e por isso nao le o strings.xml. Os textos da partida ficam
- * concentrados aqui, em um unico lugar, ate o grupo decidir como levar isso para o strings.xml.
- */
 object GameMensagens {
     const val PARTIDA_REGISTRADA = "Partida registrada no histórico."
 
