@@ -23,7 +23,6 @@ import com.devtermo.app.ui.theme.DevTermoColors
 import com.devtermo.app.viewmodel.GameStatus
 import com.devtermo.app.viewmodel.GameUiState
 
-/** Tela de resultado - Responsavel: Integrante 2. Exibida pela GameScreen quando a partida termina. */
 @Composable
 fun ResultScreen(state: GameUiState, onSair: () -> Unit) {
     val venceu = state.status == GameStatus.VITORIA
