@@ -21,7 +21,6 @@ import com.devtermo.app.model.Perfil
 
 data class BottomItem(val route: String, @StringRes val label: Int, val icon: ImageVector)
 
-/** Responsavel: Integrante 1. Itens da barra inferior por perfil. */
 fun itensDaBarra(perfil: Perfil?): List<BottomItem> = when (perfil) {
     Perfil.JOGADOR -> listOf(
         BottomItem(Routes.HOME, R.string.nav_inicio, Icons.Filled.Home),
