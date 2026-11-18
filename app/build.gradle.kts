@@ -46,7 +46,6 @@ ksp {
 }
 
 room {
-    // Schemas versionados no Git (necessario para migracoes).
     schemaDirectory("$projectDir/schemas")
 }
 
