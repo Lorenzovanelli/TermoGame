@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.devtermo.app.R
 import com.devtermo.app.ui.components.DevTermoLogo
 
-/** Tela 0 - Responsavel: Integrante 1. Identificacao de perfil (controle demonstrativo). */
 @Composable
 fun ProfileSelectScreen(onJogador: () -> Unit, onAdmin: () -> Unit) {
     Column(
