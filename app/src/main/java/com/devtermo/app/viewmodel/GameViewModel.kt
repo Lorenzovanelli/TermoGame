@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Responsavel: Integrante 3. Controla a partida. Nao acessa DAO nem Firebase. */
 class GameViewModel(
     private val wordRepository: WordRepository,
     private val matchRepository: MatchRepository,
@@ -27,13 +26,11 @@ class GameViewModel(
     private val _uiState = MutableStateFlow(GameUiState())
     val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
 
-    // Guardado para cancelar um sorteio ainda em andamento se o jogador iniciar outra partida.
     private var inicioJob: Job? = null
 
     fun iniciarPartida(categoria: String, dificuldade: String) {
         inicioJob?.cancel()
         inicioJob = viewModelScope.launch {
-            // Zera o estado ja no inicio: sem isso, uma falha no sorteio mostraria o tabuleiro da partida anterior.
             _uiState.update {
                 GameUiState(categoria = categoria, dificuldade = dificuldade, isLoading = true)
             }
@@ -55,7 +52,6 @@ class GameViewModel(
     }
 
     fun onLetra(letra: Char) {
-        // Aceita so letras; "é" vindo do teclado fisico vira "E" (mesma normalizacao do validador).
         val normalizada = WordValidator.normalizar(letra.toString())
         if (normalizada.length != 1 || !normalizada[0].isLetter()) return
 
