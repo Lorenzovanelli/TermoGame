@@ -4,22 +4,15 @@ import java.text.Normalizer
 
 enum class LetterState { CORRECT, PRESENT, ABSENT }
 
-/**
- * Responsavel: Integrante 3.
- * Funcoes puras, sem Android. Compara palpite e palavra secreta tratando letras repetidas.
- */
+
 object WordValidator {
 
-    /** Padroniza texto: maiusculas e sem acentos. */
     fun normalizar(texto: String): String =
         Normalizer.normalize(texto.trim(), Normalizer.Form.NFD)
             .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
             .uppercase()
 
-    /**
-     * Passagem 1: marca as letras corretas e conta as letras restantes da palavra secreta.
-     * Passagem 2: marca como PRESENT apenas enquanto houver letra restante disponivel.
-     */
+    
     fun avaliar(palpite: String, secreta: String): List<LetterState> {
         val p = normalizar(palpite)
         val s = normalizar(secreta)
