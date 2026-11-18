@@ -2,7 +2,6 @@ package com.devtermo.app.viewmodel
 
 import com.devtermo.app.model.Palavra
 
-/** Responsavel: Integrante 5. Estado da area administrativa de palavras. */
 data class AdminUiState(
     val palavras: List<Palavra> = emptyList(),
     val totalPalavras: Int = 0,
