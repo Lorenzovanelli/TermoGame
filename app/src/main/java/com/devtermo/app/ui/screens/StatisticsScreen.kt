@@ -13,7 +13,6 @@ import com.devtermo.app.R
 import com.devtermo.app.ui.components.ScreenTitle
 import com.devtermo.app.viewmodel.ProfileUiState
 
-/** Tela 8 - Responsavel: Integrante 6. Stateless: recebe apenas o estado. */
 @Composable
 fun StatisticsScreen(state: ProfileUiState) {
     Column(
