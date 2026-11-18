@@ -6,7 +6,6 @@ import com.devtermo.app.logic.LetterState.PRESENT
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Responsavel: Integrante 3. Casos adicionais do validador, com palavras do catalogo do projeto. */
 class WordValidatorCasosExtraTest {
 
     @Test
@@ -16,7 +15,6 @@ class WordValidatorCasosExtraTest {
 
     @Test
     fun letraAusenteNaoAfetaAsDemais() {
-        // SPRING x STRING: o P nao existe na secreta
         assertEquals(
             listOf(CORRECT, ABSENT, CORRECT, CORRECT, CORRECT, CORRECT),
             WordValidator.avaliar("SPRING", "STRING")
@@ -25,7 +23,6 @@ class WordValidatorCasosExtraTest {
 
     @Test
     fun letraRepetidaMisturandoEstados() {
-        // TERRA x ERROR: so existem dois R na secreta; um deles ja foi acertado
         assertEquals(
             listOf(PRESENT, PRESENT, CORRECT, ABSENT, ABSENT),
             WordValidator.avaliar("ERROR", "TERRA")
