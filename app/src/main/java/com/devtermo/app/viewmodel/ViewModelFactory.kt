@@ -6,10 +6,7 @@ import com.devtermo.app.data.repository.MatchRepository
 import com.devtermo.app.data.repository.SessionRepository
 import com.devtermo.app.data.repository.WordRepository
 
-/**
- * Responsavel: Integrante 1.
- * Injeta os repositories nos ViewModels. Ao criar um novo ViewModel, adicionar um ramo no when.
- */
+
 class ViewModelFactory(
     private val wordRepository: WordRepository,
     private val matchRepository: MatchRepository,
