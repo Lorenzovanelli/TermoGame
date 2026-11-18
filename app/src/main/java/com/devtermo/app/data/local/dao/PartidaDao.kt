@@ -7,7 +7,6 @@ import androidx.room.Update
 import com.devtermo.app.data.local.entity.PartidaEntity
 import kotlinx.coroutines.flow.Flow
 
-/** Responsavel: Integrante 4. */
 @Dao
 interface PartidaDao {
 
