@@ -2,11 +2,7 @@ package com.devtermo.app.logic
 
 import com.devtermo.app.model.Dificuldades
 
-/**
- * Responsavel: Integrante 3.
- * Regras de tentativas, pontuacao e teclado. Funcoes puras, sem Android.
- * Os valores abaixo sao uma PROPOSTA inicial e precisam ser confirmados pelo grupo.
- */
+
 object GameRules {
 
     private const val TENTATIVAS_FACIL = 7
@@ -36,26 +32,19 @@ object GameRules {
         else -> BONUS_PADRAO
     }
 
-    /** O palpite acertou quando todas as letras estao na posicao certa. */
     fun acertou(estados: List<LetterState>): Boolean =
         estados.isNotEmpty() && estados.all { it == LetterState.CORRECT }
 
-    /** A partida termina ao acertar ou ao gastar todas as tentativas. */
     fun terminou(venceu: Boolean, tentativasUsadas: Int, maxTentativas: Int): Boolean =
         venceu || tentativasUsadas >= maxTentativas
 
-    /** Derrota vale 0. Vitoria: quanto menos tentativas, mais pontos, multiplicado pela dificuldade. */
     fun calcularPontuacao(venceu: Boolean, tentativasUsadas: Int, maxTentativas: Int, dificuldade: String): Int {
         if (!venceu) return 0
         val restantes = (maxTentativas - tentativasUsadas).coerceAtLeast(0)
         return (PONTOS_BASE + restantes * PONTOS_POR_TENTATIVA_RESTANTE) * bonusDificuldade(dificuldade)
     }
 
-    /**
-     * Cor de cada tecla do teclado: vale sempre a melhor informacao ja descoberta
-     * (uma letra que ja foi CORRECT nunca volta a ser PRESENT ou ABSENT).
-     * Recebe pares (palpite, estados) para a logica nao depender do pacote viewmodel.
-     */
+   
     fun estadoDasTeclas(tentativas: List<Pair<String, List<LetterState>>>): Map<Char, LetterState> {
         val teclas = mutableMapOf<Char, LetterState>()
         for ((palpite, estados) in tentativas) {
