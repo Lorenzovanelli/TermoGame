@@ -31,11 +31,7 @@ import com.devtermo.app.viewmodel.GameViewModel
 import com.devtermo.app.viewmodel.ProfileViewModel
 import com.devtermo.app.viewmodel.ViewModelFactory
 
-/**
- * Responsavel: Integrante 1.
- * Controla a navegacao global e o acesso por perfil. Os ViewModels sao criados aqui (escopo da Activity)
- * e as telas recebem apenas estado e lambdas.
- */
+
 @Composable
 fun DevTermoNavHost(factory: ViewModelFactory) {
     val navController = rememberNavController()
@@ -50,7 +46,6 @@ fun DevTermoNavHost(factory: ViewModelFactory) {
     val backStack by navController.currentBackStackEntryAsState()
     val rotaAtual = backStack?.destination?.route
 
-    // Entrada e saida de perfil: leva o usuario para a area correta.
     LaunchedEffect(profile.perfil) {
         when (profile.perfil) {
             Perfil.JOGADOR -> navController.navigate(Routes.HOME) {
@@ -65,7 +60,6 @@ fun DevTermoNavHost(factory: ViewModelFactory) {
         }
     }
 
-    // Protecao de rotas: jogador nao abre destinos administrativos.
     LaunchedEffect(rotaAtual) {
         val perfil = profile.perfil
         val bloqueada = rotaAtual != null && rotaAtual != Routes.PERFIL && (
@@ -161,7 +155,7 @@ fun DevTermoNavHost(factory: ViewModelFactory) {
                     navArgument(Routes.ARG_WORD_ID) { type = NavType.IntType; defaultValue = -1 }
                 )
             ) {
-                // Fecha o formulario quando o salvamento termina com sucesso.
+                
                 LaunchedEffect(admin.mensagemSucesso) {
                     if (admin.mensagemSucesso != null) navController.popBackStack()
                 }
