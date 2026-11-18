@@ -7,7 +7,6 @@ import androidx.room.Upsert
 import com.devtermo.app.data.local.entity.PalavraEntity
 import kotlinx.coroutines.flow.Flow
 
-/** Responsavel: Integrante 4. Somente consultas e operacoes simples, sem regra de negocio. */
 @Dao
 interface PalavraDao {
 
