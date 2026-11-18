@@ -1,6 +1,5 @@
 package com.devtermo.app.ui.navigation
 
-/** Responsavel: Integrante 1. Todas as rotas em um unico lugar, sem strings soltas. */
 object Routes {
     const val PERFIL = "perfil"
     const val HOME = "home"
@@ -17,9 +16,7 @@ object Routes {
 
     fun wordForm(id: Int?): String = if (id == null) "word_form" else "word_form?id=$id"
 
-    /** Destinos que um jogador nao pode abrir. */
     val somenteAdmin = setOf(ADMIN, WORDS, STATS, WORD_FORM)
 
-    /** Destinos da area do jogador (nao exibidos ao administrador). */
     val somenteJogador = setOf(HOME, GAME, RANKING, HISTORY)
 }
